@@ -1,7 +1,11 @@
 import React from "react";
 
-function ProfilePage() {
-  return <h1>ProfilePage</h1>;
-}
+const ProfilePage = () => {
+  return (
+    <div>
+      <h1>Profile Page</h1>
+    </div>
+  );
+};
 
 export default ProfilePage;
