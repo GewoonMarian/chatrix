@@ -1,9 +1,10 @@
 import React from "react";
-import assets from "../assets/assets";
+import assets, { userDummyData } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
 
 const Sidebar = (selectedUser, setSelectedUser) => {
-  const navigate = useNavigate;
+  const navigate = useNavigate();
+
   return (
     <div
       className={`bg-[#818582]/10 h-full p-5 rounded-r-xl overflow-y-scroll text-white ${
@@ -12,7 +13,8 @@ const Sidebar = (selectedUser, setSelectedUser) => {
     >
       <div className="pb-5">
         <div className="flex justify-between items-center">
-          <img src={assets.logo} alt="Logo" className="max-w-40" />
+          <img src={assets.logo} alt="Logo" className="max-w-10" />
+          <p className="text-white-500">TextIT</p>
           <div className="relative py-2 group">
             <img
               src={assets.menu_icon}
@@ -31,6 +33,47 @@ const Sidebar = (selectedUser, setSelectedUser) => {
             </div>
           </div>
         </div>
+        <div className="bg-[#282142] rounded-full  flex item-center gap-2 px-4 py-2 mt-5">
+          <img src={assets.search_icon} alt="Search" className="w-3" />
+          <input
+            type="text"
+            placeholder="Search Users"
+            className="bg-transparent border-none outline-none text-white text-xs placeholder-[#c8c8c8] flex-1"
+          />
+        </div>
+      </div>
+      <div className="flex flex-col">
+        {userDummyData.map((user, index) => (
+          <div
+            onClick={() => {
+              setSelectedUser(user);
+              navigate("/chat");
+            }}
+            key={index}
+            className={`relative flex items-center gap-2 p-2 pl-4 rounded cursor-pointer max-sm:text-sm ${
+              selectedUser?._id === user._id && "bg-[#282142]/50"
+            }`}
+          >
+            <img
+              src={user?.profilePic || assets.avatar_icon}
+              alt=""
+              className="w-[35px] aspect-[1/1] rounded-full"
+            />
+            <div className="flex flex-col leading-5">
+              <p className="text-sm font-semibold">{user.fullName}</p>
+              {index < 3 ? (
+                <span className="text-green-400 text-xs">Online</span>
+              ) : (
+                <span className="text-neutral-400 text-xs">Offline</span>
+              )}
+            </div>
+            {index > 2 && (
+              <p className="absolute top-4 right-4 text-sx h-5 w-5 flex justify-center items-center rounded-full bg-violet-500/50">
+                {index}
+              </p>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
