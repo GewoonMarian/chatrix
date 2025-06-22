@@ -41,10 +41,9 @@ const Chat = ({ selectedUser, setSelectedUser }) => {
         {messagesDummyData.map((message, index) => (
           <div
             key={index}
-            className={`flex items-end gap-2 justify-end ${
-              message.senderId !== "680f50e4f10f3cd28382ecf9" &&
+            className={`flex items-end gap-2 justify-end ${message.senderId !== "680f50e4f10f3cd28382ecf9" &&
               "flex-row-reverse"
-            }`}
+              }`}
           >
             {message.image ? (
               <img
@@ -54,11 +53,10 @@ const Chat = ({ selectedUser, setSelectedUser }) => {
               />
             ) : (
               <p
-                className={`p-2 max-w-[200px] md:text-small font-light rounded-lg mb-8 break-all bg-violet-500/30 text-white ${
-                  message.senderId === "680f50e4f10f3cd28382ecf9"
-                    ? "rounded-br-none"
-                    : "rounded-bl-none"
-                }`}
+                className={`p-2 max-w-[200px] md:text-small font-light rounded-lg mb-8 break-all bg-violet-500/30 text-white ${message.senderId === "680f50e4f10f3cd28382ecf9"
+                  ? "rounded-br-none"
+                  : "rounded-bl-none"
+                  }`}
               >
                 {message.text}
               </p>
