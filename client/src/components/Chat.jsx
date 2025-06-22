@@ -3,16 +3,17 @@ import assets, { messagesDummyData } from "../assets/assets";
 import { messageTimeFormatter } from "../lib/utils";
 
 const Chat = ({ selectedUser, setSelectedUser }) => {
-  const scrollEnd = useRef();
+  const scrollEnd = useRef(null);
 
   useEffect(() => {
     if (scrollEnd.current) {
       scrollEnd.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, []);
+  }, [selectedUser, messagesDummyData]);
 
   return selectedUser ? (
     <div className="h-full overflow-scroll relative backdrop-blur-lg">
+      {/* Header with user info */}
       <div className="flex items-center gap-3 py-3 mx-4 border-b border-stone-500">
         <img
           src={selectedUser?.profilePic || assets.avatar_icon}
@@ -53,7 +54,7 @@ const Chat = ({ selectedUser, setSelectedUser }) => {
               />
             ) : (
               <p
-                className={`p-2 max-w-[200px] md:text-small font-light rounded-lb mb-8 break-all bg-violet-500/30 text-white ${
+                className={`p-2 max-w-[200px] md:text-small font-light rounded-lg mb-8 break-all bg-violet-500/30 text-white ${
                   message.senderId === "680f50e4f10f3cd28382ecf9"
                     ? "rounded-br-none"
                     : "rounded-bl-none"
@@ -79,6 +80,21 @@ const Chat = ({ selectedUser, setSelectedUser }) => {
           </div>
         ))}
         <div ref={scrollEnd}></div>
+      </div>
+      {/* Input area */}
+      <div className="absolute bottom-0 left-0 right-0 flex items-center gap-3 p-3">
+        <div className="flex-1 flex items-center bg-gray-100/12 px-3 rounded-full">
+          <input type="text" placeholder="Type a message" className="flex-1 text-sm p-3 border-none rounded-lg outline-none text-white placeholder-gray-400" />
+          <input type="file" accept="image/*" id="image" hidden />
+          <label htmlFor="image">
+            <img
+              src={assets.gallery_icon}
+              alt="Attach"
+              className="w-5 mr-2 cursor-pointer"
+            />
+          </label>
+        </div>
+        <img src={assets.send_button} alt="" className="w-7 cursor-pointer" />
       </div>
     </div>
   ) : (
