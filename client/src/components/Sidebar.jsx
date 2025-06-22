@@ -2,7 +2,7 @@ import React from "react";
 import assets, { userDummyData } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
 
-const Sidebar = (selectedUser, setSelectedUser) => {
+const Sidebar = ({ selectedUser, setSelectedUser }) => {
   const navigate = useNavigate();
 
   return (
@@ -47,7 +47,7 @@ const Sidebar = (selectedUser, setSelectedUser) => {
           <div
             onClick={() => {
               setSelectedUser(user);
-              navigate("/chat");
+              // navigate("/chat");
             }}
             key={index}
             className={`relative flex items-center gap-2 p-2 pl-4 rounded cursor-pointer max-sm:text-sm ${
@@ -60,7 +60,7 @@ const Sidebar = (selectedUser, setSelectedUser) => {
               className="w-[35px] aspect-[1/1] rounded-full"
             />
             <div className="flex flex-col leading-5">
-              <p className="text-sm font-semibold">{user.fullName}</p>
+              <p>{user.fullName}</p>
               {index < 3 ? (
                 <span className="text-green-400 text-xs">Online</span>
               ) : (

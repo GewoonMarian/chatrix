@@ -1,9 +1,9 @@
 import React from "react";
 
-const RightSidebar = () => {
+const RightSidebar = ({ selectedUser, setSelectedUser }) => {
   return (
     <div>
-      <h1>RightSide bAr</h1>
+      <h1>Right Sidebar</h1>
     </div>
   );
 };
