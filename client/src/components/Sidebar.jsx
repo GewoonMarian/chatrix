@@ -14,7 +14,7 @@ const Sidebar = ({ selectedUser, setSelectedUser }) => {
       <div className="pb-5">
         <div className="flex justify-between items-center">
           <img src={assets.logo} alt="Logo" className="max-w-10" />
-          <p className="text-white-500">TextIT</p>
+          <p className="text-white-500">Chatrix</p>
           <div className="relative py-2 group">
             <img
               src={assets.menu_icon}

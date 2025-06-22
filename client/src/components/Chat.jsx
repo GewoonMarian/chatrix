@@ -41,9 +41,10 @@ const Chat = ({ selectedUser, setSelectedUser }) => {
         {messagesDummyData.map((message, index) => (
           <div
             key={index}
-            className={`flex items-end gap-2 justify-end ${message.senderId !== "680f50e4f10f3cd28382ecf9" &&
+            className={`flex items-end gap-2 justify-end ${
+              message.senderId !== "680f50e4f10f3cd28382ecf9" &&
               "flex-row-reverse"
-              }`}
+            }`}
           >
             {message.image ? (
               <img
@@ -53,10 +54,11 @@ const Chat = ({ selectedUser, setSelectedUser }) => {
               />
             ) : (
               <p
-                className={`p-2 max-w-[200px] md:text-small font-light rounded-lg mb-8 break-all bg-violet-500/30 text-white ${message.senderId === "680f50e4f10f3cd28382ecf9"
-                  ? "rounded-br-none"
-                  : "rounded-bl-none"
-                  }`}
+                className={`p-2 max-w-[200px] md:text-small font-light rounded-lg mb-8 break-all bg-violet-500/30 text-white ${
+                  message.senderId === "680f50e4f10f3cd28382ecf9"
+                    ? "rounded-br-none"
+                    : "rounded-bl-none"
+                }`}
               >
                 {message.text}
               </p>
@@ -82,7 +84,11 @@ const Chat = ({ selectedUser, setSelectedUser }) => {
       {/* Input area */}
       <div className="absolute bottom-0 left-0 right-0 flex items-center gap-3 p-3">
         <div className="flex-1 flex items-center bg-gray-100/12 px-3 rounded-full">
-          <input type="text" placeholder="Type a message" className="flex-1 text-sm p-3 border-none rounded-lg outline-none text-white placeholder-gray-400" />
+          <input
+            type="text"
+            placeholder="Type a message"
+            className="flex-1 text-sm p-3 border-none rounded-lg outline-none text-white placeholder-gray-400"
+          />
           <input type="file" accept="image/*" id="image" hidden />
           <label htmlFor="image">
             <img
