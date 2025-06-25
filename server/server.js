@@ -41,7 +41,6 @@ io.on("connection", (socket) => {
 // Middleware setup
 app.use(express.json({ limit: "4mb" }));
 app.use(cors());
-app.use(express.json());
 
 app.get("/", (req, res) => {
   res.send("Welcome to the server!");

@@ -17,7 +17,7 @@ export const ChatProvider = ({ children }) => {
   // Function to fetch users for sidebar
   const getUsers = async () => {
     try {
-      const { data } = await axios.get("/api/chat/users");
+      const { data } = await axios.get("/api/messages/users");
       if (data.success) {
         setUsers(data.users);
         setUnseenMessages(data.unseenMessages);
@@ -58,10 +58,11 @@ export const ChatProvider = ({ children }) => {
 
   // Function to subscribe to messages for the selected user
   const subscribeToMessages = () => {
-    if (!socket) {
-      toast.error("Socket connection not established");
+    if (!socket || !socket.connected) {
+      console.warn("Socket not connected yet");
       return;
     }
+
     socket.on("newMessage", (newMessage) => {
       if (selectedUser && newMessage.senderId === selectedUser._id) {
         newMessage.isSeen = true;
@@ -83,8 +84,20 @@ export const ChatProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    subscribeToMessages();
+    if (!socket) return;
+
+    const onConnect = () => {
+      subscribeToMessages();
+    };
+
+    if (socket.connected) {
+      subscribeToMessages();
+    } else {
+      socket.on("connect", onConnect);
+    }
+
     return () => {
+      socket.off("connect", onConnect);
       unsubscribeFromMessages();
     };
   }, [selectedUser, socket]);
