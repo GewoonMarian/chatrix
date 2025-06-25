@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [socket, setSocket] = useState(null);
 
-  //   check if user is authenticated and set user data abd create socket connection
+  //   check if user is authenticated and set user data and create socket connection
   const checkAuth = async () => {
     try {
       const { data } = await axios.get("/api/auth/check");
@@ -33,9 +33,9 @@ export const AuthProvider = ({ children }) => {
     try {
       const { data } = await axios.post(`/api/auth/${state}`, credentials);
       if (data.success) {
-        setAuthUser(data.userData);
-        connectSocket(data.userData);
-        axios.defaults.headers.common["token"] = data.token;
+        setAuthUser(data.user);
+        connectSocket(data.user);
+        axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
         setToken(data.token);
         localStorage.setItem("token", data.token);
         toast.success(data.message);
@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
     setAuthUser(null);
     setOnlineUsers([]);
-    axios.defaults.headers.common["token"] = null;
+    delete axios.defaults.headers.common["Authorization"];
     toast.success("Logged out successfully");
     socket.disconnect();
   };
@@ -91,7 +91,8 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     if (token) {
-      axios.defaults.headers.common["token"] = token;
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      checkAuth();
     }
   }, []);
 

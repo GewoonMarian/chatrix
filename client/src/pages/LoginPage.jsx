@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import assets from "../assets/assets";
+import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const [currentState, setCurrentState] = useState("Sign Up");
@@ -9,11 +11,28 @@ const LoginPage = () => {
   const [bio, setBio] = useState("");
   const [isDataSubmitted, setIsDataSubmitted] = useState(false);
 
-  const handleSubmit = (e) => {
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (currentState === "Sign Up" && !isDataSubmitted) {
       setIsDataSubmitted(true);
       return;
+    }
+
+    const success = await login(
+      currentState === "Sign Up" ? "signup" : "login",
+      {
+        fullName,
+        email,
+        password,
+        bio,
+      }
+    );
+
+    if (success) {
+      navigate("/");
     }
   };
 
@@ -54,6 +73,7 @@ const LoginPage = () => {
               value={email}
               type="email"
               placeholder="Enter your email"
+              autoComplete="email"
               required
               className="p-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -62,6 +82,7 @@ const LoginPage = () => {
               value={password}
               type="password"
               placeholder="Enter your password"
+              autoComplete="current-password"
               required
               className="p-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
