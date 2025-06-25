@@ -7,6 +7,7 @@ import {
 import { authMiddleware } from "../middleware/auth.js";
 
 const messageRouter = express.Router();
+
 messageRouter.get("/users", authMiddleware, getUsersForSidebar);
 messageRouter.get("/:id", authMiddleware, getMessages);
 messageRouter.post("/send/:id", authMiddleware, sendMessage);
