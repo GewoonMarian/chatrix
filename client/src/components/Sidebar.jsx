@@ -77,7 +77,6 @@ const Sidebar = () => {
           <div
             onClick={() => {
               setSelectedUser(user);
-              // navigate("/chat");
             }}
             key={index}
             className={`relative flex items-center gap-2 p-2 pl-4 rounded cursor-pointer max-sm:text-sm ${

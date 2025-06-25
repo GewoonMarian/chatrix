@@ -81,9 +81,12 @@ export const sendMessage = async (req, res) => {
       image: imageUrl,
     });
 
+    // Save the message to the database
+    await newMessage.save();
+
+    // Emit the new message to the receiver if they are online
     const receiverSocketId = connectedUsers[receiverId];
     if (receiverSocketId) {
-      // Emit the new message to the receiver if they are online
       io.to(receiverSocketId).emit("getMessage", newMessage);
     }
 
