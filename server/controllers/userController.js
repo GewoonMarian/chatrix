@@ -35,8 +35,11 @@ export const signup = async (req, res) => {
       token,
     });
   } catch (error) {
-    console.log("Error creating user:", error.message);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    res.status(500).json({
+      success: false,
+      message: "Error creating user:",
+      error: error.message,
+    });
   }
 };
 
@@ -68,8 +71,11 @@ export const login = async (req, res) => {
       .status(200)
       .json({ success: true, message: "Login successful", user, token });
   } catch (error) {
-    console.log("Error logging in:", error.message);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    res.status(500).json({
+      success: false,
+      message: "Error loggin in:",
+      error: error.message,
+    });
   }
 };
 
@@ -111,7 +117,10 @@ export const updateProfile = async (req, res) => {
       user: updateProfile,
     });
   } catch (error) {
-    console.log("Error updating profile:", error.message);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    res.status(500).json({
+      success: false,
+      message: "Error updating profile",
+      error: error.message,
+    });
   }
 };

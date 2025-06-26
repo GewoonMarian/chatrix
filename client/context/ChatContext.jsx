@@ -1,12 +1,10 @@
-import { createContext, useEffect } from "react";
-import { useState, useContext } from "react";
+import { createContext, useEffect, useContext, useState } from "react";
 import { AuthContext } from "./AuthContext";
 import toast from "react-hot-toast";
 
 export const ChatContext = createContext();
 
 export const ChatProvider = ({ children }) => {
-  // This context will be used to manage chat-related state across the application
   const [messages, setMessages] = useState([]);
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -14,7 +12,7 @@ export const ChatProvider = ({ children }) => {
 
   const { socket, axios } = useContext(AuthContext);
 
-  // Function to fetch users for sidebar
+  // Fetch chat users
   const getUsers = async () => {
     try {
       const { data } = await axios.get("/api/messages/users");
@@ -23,24 +21,45 @@ export const ChatProvider = ({ children }) => {
         setUnseenMessages(data.unseenMessages);
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(
+        error?.response?.data?.message ||
+          error.message ||
+          "Failed to load users"
+      );
     }
   };
 
-  // Function to fetch messages for the selected user
+  // Fetch chat history with selected user
   const getMessages = async (userId) => {
     try {
       const { data } = await axios.get(`/api/messages/${userId}`);
       if (data.success) {
         setMessages(data.messages);
+        console.log("Loaded messages for user:", data.messages);
+        // Optional: mark all as seen when messages are loaded
+        // await axios.put(`/api/messages/mark-all/${userId}`);
+        setUnseenMessages((prev) => {
+          const updated = { ...prev };
+          delete updated[userId];
+          return updated;
+        });
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(
+        error?.response?.data?.message ||
+          error.message ||
+          "Failed to load messages"
+      );
     }
   };
 
-  // Function to send a message
+  // Send message
   const sendMessage = async (messageData) => {
+    if (!selectedUser) {
+      toast.error("No user selected");
+      return;
+    }
+
     try {
       const { data } = await axios.post(
         `/api/messages/send/${selectedUser._id}`,
@@ -52,55 +71,70 @@ export const ChatProvider = ({ children }) => {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(
+        error?.response?.data?.message || error.message || "Message failed"
+      );
     }
   };
 
-  // Function to subscribe to messages for the selected user
+  // Subscribe to incoming messages
   const subscribeToMessages = () => {
     if (!socket || !socket.connected) {
       console.warn("Socket not connected yet");
       return;
     }
 
+    // Prevent multiple listeners
+    socket.off("newMessage");
+
     socket.on("newMessage", (newMessage) => {
       if (selectedUser && newMessage.senderId === selectedUser._id) {
-        newMessage.isSeen = true;
+        newMessage.seen = true;
         setMessages((prevMessages) => [...prevMessages, newMessage]);
         axios.put(`/api/messages/mark/${newMessage._id}`);
       } else {
         setUnseenMessages((prevUnseenMessages) => ({
           ...prevUnseenMessages,
-          [newMessage.senderId]:
-            (prevUnseenMessages[newMessage.senderId] || 0) + 1,
+          [newMessage.senderId]: prevUnseenMessages[newMessage.senderId]
+            ? prevUnseenMessages[newMessage.senderId] + 1
+            : 1,
         }));
       }
     });
   };
 
-  //   function to unsubscribe from messages
+  // Unsubscribe on cleanup
   const unsubscribeFromMessages = () => {
     if (socket) socket.off("newMessage");
   };
 
+  // Re-subscribe on socket or selected user change
   useEffect(() => {
     if (!socket) return;
-
-    const onConnect = () => {
-      subscribeToMessages();
-    };
 
     if (socket.connected) {
       subscribeToMessages();
     } else {
+      console.log("Socket not connected, waiting for connect event");
+
+      const onConnect = () => {
+        subscribeToMessages();
+      };
+
       socket.on("connect", onConnect);
+
+      // Clean up listener on unmount or socket change
+      return () => {
+        socket.off("connect", onConnect);
+        unsubscribeFromMessages();
+      };
     }
 
+    // Also clean up if socket.connected was true
     return () => {
-      socket.off("connect", onConnect);
       unsubscribeFromMessages();
     };
-  }, [selectedUser, socket]);
+  }, [socket, selectedUser]);
 
   const value = {
     messages,

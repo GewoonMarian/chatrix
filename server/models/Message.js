@@ -12,7 +12,7 @@ const MessageSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    text: { type: String, required: true },
+    text: { type: String, required: false },
     image: { type: String, default: "" },
     seen: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },

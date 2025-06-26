@@ -32,7 +32,6 @@ io.on("connection", (socket) => {
 
   // Handle user disconnection
   socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
     delete connectedUsers[userId];
     io.emit("getOnlineUsers", Object.keys(connectedUsers));
   });
@@ -41,10 +40,6 @@ io.on("connection", (socket) => {
 // Middleware setup
 app.use(express.json({ limit: "4mb" }));
 app.use(cors());
-
-app.get("/", (req, res) => {
-  res.send("Welcome to the server!");
-});
 
 await connectDB();
 

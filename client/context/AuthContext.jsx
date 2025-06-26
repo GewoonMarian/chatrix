@@ -23,7 +23,11 @@ export const AuthProvider = ({ children }) => {
         connectSocket(data.user);
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(
+        error?.response?.data?.message ||
+          error.message ||
+          "Authentication failed"
+      );
       logout();
     }
   };
@@ -43,7 +47,9 @@ export const AuthProvider = ({ children }) => {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(
+        error?.response?.data?.message || error.message || "Login failed"
+      );
     }
   };
 
@@ -55,6 +61,7 @@ export const AuthProvider = ({ children }) => {
     setOnlineUsers([]);
     delete axios.defaults.headers.common["Authorization"];
     if (socket) socket.disconnect();
+    setSocket(null);
     toast.success("Logged out successfully");
   };
 
@@ -69,13 +76,20 @@ export const AuthProvider = ({ children }) => {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(
+        error?.response?.data?.message || error.message || "Update failed"
+      );
     }
   };
 
   // Socket connection setup
   const connectSocket = (userData) => {
-    if (!userData || socket?.connected) return;
+    if (!userData) return;
+
+    // Disconnect existing socket if any
+    if (socket?.connected) {
+      socket.disconnect();
+    }
 
     const newSocket = io(backendUrl, {
       query: {
@@ -91,16 +105,7 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
-  // On initial mount: restore token from localStorage if exists
-  useEffect(() => {
-    const localToken = localStorage.getItem("token");
-    if (localToken) {
-      setToken(localToken);
-      axios.defaults.headers.common["Authorization"] = `Bearer ${localToken}`;
-    }
-  }, []);
-
-  // Whenever token changes: re-check auth
+  // Initial load: restore token and auth
   useEffect(() => {
     const localToken = localStorage.getItem("token");
     if (localToken) {
@@ -112,6 +117,7 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     axios,
+    token,
     authUser,
     onlineUsers,
     socket,

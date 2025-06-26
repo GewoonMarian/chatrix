@@ -1,12 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import Sidebar from "../components/Sidebar";
 import Chat from "../components/Chat";
 import RightSidebar from "../components/RightSidebar";
-import { useState } from "react";
+import { ChatContext } from "../../context/ChatContext";
 
 const HomePage = () => {
-  // State to manage the selected user in the chat
-  const [selectedUser, setSelectedUser] = useState(false);
+  const { selectedUser } = useContext(ChatContext);
 
   return (
     <div className="border w-full h-screen sm:px-[15%] sm:py-[5%]">
@@ -19,10 +18,7 @@ const HomePage = () => {
       >
         <Sidebar />
         <Chat />
-        <RightSidebar
-          selectedUser={selectedUser}
-          setSelectedUser={setSelectedUser}
-        />
+        <RightSidebar />
       </div>
     </div>
   );
